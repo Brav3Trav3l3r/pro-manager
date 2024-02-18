@@ -1,3 +1,4 @@
+const { promisify } = require('util');
 const User = require('../model/userModel');
 const catchAsync = require('../utils/catchAsync');
 const jwt = require('jsonwebtoken');
@@ -39,7 +40,23 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.protect = (req, res, next) => {
-  console.log('protect ran');
+exports.protect = catchAsync(async (req, res, next) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    throw new AppError('Please login to access this route', 401);
+  }
+
+  const token = authorization.split(' ')[1];
+
+  const decoded = await promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET_KEY
+  );
+
+  const user = await User.findOne({ _id: decoded.id });
+  req.user = user;
+
   next();
-};
+});
+

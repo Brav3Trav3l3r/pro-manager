@@ -2,6 +2,7 @@ const express = require('express');
 const globalErrorHandler = require('./controllers/errorController');
 const authRouter = require('./routes/authRoute');
 const taskRouter = require('./routes/taskRoute');
+const userRouter = require('./routes/userRoute');
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,7 @@ app.get('/api/v1/', (req, res) => {
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tasks', taskRouter);
+app.use('/api/v1/users', userRouter);
 
 app.get('*', (req, res, next) => next(new Error('Not Found')));
 
