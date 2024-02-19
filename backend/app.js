@@ -3,6 +3,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const authRouter = require('./routes/authRoute');
 const taskRouter = require('./routes/taskRoute');
 const userRouter = require('./routes/userRoute');
+const AppError = require('./utils/AppError');
 
 const app = express();
 app.use(express.json());
@@ -12,16 +13,17 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/v1/', (req, res) => {
-  return res.status(200).send('Explore the version 1 on kanban server.');
+  return res.status(200).send('Explore version 1 of kanban server.');
 });
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tasks', taskRouter);
 app.use('/api/v1/users', userRouter);
 
-app.get('*', (req, res, next) => next(new Error('Not Found')));
+app.all('*', (req, res, next) => {
+  throw new AppError('Route does not exists', 404);
+});
 
-// gloabl error handler
 app.use(globalErrorHandler);
 
 module.exports = app;

@@ -4,6 +4,7 @@ const { protect } = require('../controllers/authController');
 
 const router = express.Router();
 
-router.post('/', protect, updateUser);
+router.patch('/', protect, updateUser);
+router.get('/', (req, res) => res.sendStatus(200));
 
 module.exports = router;

@@ -3,45 +3,30 @@ const User = require('../model/userModel');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 
-const filterObj = (obj, filterArray) => {
-  const copyObj = { ...obj };
-
-  Object.keys(obj).forEach((key) => {
-    // remove key if not present in array or its value is undefined
-    if (!filterArray.includes(key) || !copyObj[key]) {
-      delete copyObj[key];
-    }
-  });
-
-  return copyObj;
-};
-
 exports.updateUser = catchAsync(async (req, res) => {
-  const updatedObj = filterObj(req.body, ['name', 'password', 'oldPassword']);
-  console.log(updatedObj);
+  const { name, newPassword, oldPassword } = req.body;
+  let hashPassword;
 
-  if (
-    (updatedObj.oldPassword && !updatedObj.password) ||
-    (updatedObj.password && !updatedObj.oldPassword)
-  ) {
-    throw new AppError(
-      "Must provide old password and new password to change the user's password."
-    );
+  if (newPassword) {
+    if (!oldPassword) {
+      throw new AppError(
+        'You must provide your old password to update your password.',
+        400
+      );
+    } else {
+      const user = await User.findById(req.user._id);
+
+      if (!(await user.comparePasswords(oldPassword, user.password))) {
+        throw new AppError('Old password is incorrect');
+      }
+
+      hashPassword = await bcrypt.hash(newPassword, 12);
+    }
   }
-
-  const user = await User.findById(req.user._id);
-
-  // check if password is correct
-  if (!(await user.comparePasswords(updatedObj.oldPassword, user.password))) {
-    throw new AppError('Old password is incorrect');
-  }
-
-  // encrypt the password and update password
-  updatedObj.password = await bcrypt.hash(updatedObj.password, 12);
 
   const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
-    { name: updatedObj.name, password: updatedObj.password },
+    { name: name, password: hashPassword },
     {
       new: true,
       runValidators: true,

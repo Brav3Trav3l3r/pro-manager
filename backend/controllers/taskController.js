@@ -3,6 +3,7 @@ const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getTasks = catchAsync(async (req, res, next) => {
+  console.log(req.query);
   const tasks = await Task.find({ createdBy: req.user._id });
 
   res.status(200).json({
@@ -32,6 +33,7 @@ exports.createTask = catchAsync(async (req, res, next) => {
 exports.updateTask = catchAsync(async (req, res, next) => {
   const { taskId } = req.params;
   const { title, priority, checklists, dueDate } = req.body;
+  console.log(title, priority, checklists, dueDate);
 
   const updatedTask = await Task.findOneAndUpdate(
     { _id: taskId, createdBy: req.user._id },
