@@ -35,6 +35,7 @@ exports.login = catchAsync(async (req, res, next) => {
   res.status(200).json({
     message: 'success',
     data: {
+      user,
       token,
     },
   });
@@ -59,4 +60,3 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   next();
 });
-

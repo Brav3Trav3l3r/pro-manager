@@ -4,15 +4,32 @@ import AuthLayout from './pages/Auth';
 import PublicLayout from './pages/Public';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import AuthProvider from './store/AuthProvider';
+import Board from './pages/Admin/Board';
+import Analytics from './pages/Admin/Analytics';
+import Settings from './pages/Admin/Settings';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AdminLayout />,
+    element: (
+      <AuthProvider>
+        <AdminLayout />
+      </AuthProvider>
+    ),
+    children: [
+      { index: true, element: <Board /> },
+      { path: 'analytics', element: <Analytics /> },
+      { path: 'settings', element: <Settings /> },
+    ],
   },
   {
     path: '/auth',
-    element: <AuthLayout />,
+    element: (
+      <AuthProvider>
+        <AuthLayout />
+      </AuthProvider>
+    ),
     children: [
       {
         index: true,

@@ -1,11 +1,22 @@
-import { Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { Outlet, useNavigate } from 'react-router-dom';
 import astroBoy from '../../assets/kanban_astro.png';
 
-import styles from './style/index.module.css';
 import { Text } from '../../components/ui';
+import styles from './style/index.module.css';
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '../../store/AuthProvider';
 
 export default function AuthLayout() {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
   return (
     <>
       <Toaster

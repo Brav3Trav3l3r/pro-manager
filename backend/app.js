@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const globalErrorHandler = require('./controllers/errorController');
 const authRouter = require('./routes/authRoute');
 const taskRouter = require('./routes/taskRoute');
@@ -6,6 +7,7 @@ const userRouter = require('./routes/userRoute');
 const AppError = require('./utils/AppError');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {

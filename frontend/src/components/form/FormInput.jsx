@@ -1,4 +1,4 @@
-import Proptypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { Text } from '../ui';
 
 import styles from './styles/FormInput.module.css';
@@ -13,13 +13,15 @@ const checkType = (type) => {
 };
 
 export default function FormInput({
+  register,
+  error,
+  label,
   placeholder,
   mainIcon,
   secondaryIcon,
   type = 'text',
 }) {
   const [isVisible, setIsVisible] = useState(() => checkType(type));
-  console.log(isVisible);
 
   const togglePassword = () => {
     setIsVisible((prev) => !prev);
@@ -30,6 +32,7 @@ export default function FormInput({
       <div className={styles.input}>
         <div className={styles.icon}>{mainIcon}</div>
         <input
+          {...register(label)}
           type={isVisible ? 'text' : 'password'}
           placeholder={placeholder}
         />
@@ -41,14 +44,17 @@ export default function FormInput({
           {secondaryIcon}
         </div>
       </div>
-      <Text color="red">Error message</Text>
+      <Text color="red">{error?.message}</Text>
     </div>
   );
 }
 
 FormInput.propTypes = {
-  type: Proptypes.string,
-  placeholder: Proptypes.string,
-  mainIcon: Proptypes.element,
-  secondaryIcon: Proptypes.element,
+  label: PropTypes.string.isRequired,
+  error: PropTypes.object,
+  type: PropTypes.string,
+  placeholder: PropTypes.string,
+  mainIcon: PropTypes.element,
+  secondaryIcon: PropTypes.element,
+  register: PropTypes.any,
 };

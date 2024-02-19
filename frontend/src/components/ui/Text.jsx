@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styles from './styles/Text.module.css';
 
 export default function Text({
-  children,
+  children = '',
   step = 3,
   weight = '400',
   color = 'inherit',
@@ -61,6 +61,6 @@ Text.propTypes = {
   weight: PropTypes.string,
   color: PropTypes.string,
   style: PropTypes.object,
-  children: PropTypes.string.isRequired,
+  children: PropTypes.string,
   className: PropTypes.object,
 };
