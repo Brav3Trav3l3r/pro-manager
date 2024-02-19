@@ -22,7 +22,7 @@ exports.login = catchAsync(async (req, res, next) => {
     throw new AppError('Email and Password are required!', 400);
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.comparePasswords(password, user.password))) {
     throw new AppError('Email or password mismatch', 400);
@@ -35,7 +35,7 @@ exports.login = catchAsync(async (req, res, next) => {
   res.status(200).json({
     message: 'success',
     data: {
-      user,
+      info: user,
       token,
     },
   });
