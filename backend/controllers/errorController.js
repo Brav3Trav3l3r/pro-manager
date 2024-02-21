@@ -48,5 +48,4 @@ module.exports = (err, req, res, next) => {
     message: err.message,
     err: err,
   });
-  // throw new Error('Error by global handler');
 };

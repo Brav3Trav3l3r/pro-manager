@@ -1,10 +1,10 @@
 const express = require('express');
-const { updateUser } = require('../controllers/userController');
+const { updateUser, getUser } = require('../controllers/userController');
 const { protect } = require('../controllers/authController');
 
 const router = express.Router();
 
 router.patch('/', protect, updateUser);
-router.get('/', (req, res) => res.sendStatus(200));
+router.get('/', protect, getUser);
 
 module.exports = router;

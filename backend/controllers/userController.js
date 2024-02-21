@@ -15,6 +15,19 @@ const filterObject = (obj, arr) => {
   return updatedObj;
 };
 
+exports.getUser = catchAsync(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: { info: { name: user.name, email: user.email, _id: user._id } },
+  });
+});
+
 exports.updateUser = catchAsync(async (req, res) => {
   const { name, newPassword, oldPassword } = req.body;
   let hashPassword;

@@ -35,9 +35,11 @@ export default function AdminLayout() {
           <div className={styles.navigation}>
             <Navigation />
           </div>
-          <div className={styles.outlet}>
-            <Outlet />
-          </div>
+          {user && (
+            <div className={styles.outlet}>
+              <Outlet />
+            </div>
+          )}
         </main>
       )}
     </div>

@@ -61,6 +61,6 @@ Text.propTypes = {
   weight: PropTypes.string,
   color: PropTypes.string,
   style: PropTypes.object,
-  children: PropTypes.string,
+  children: PropTypes.any,
   className: PropTypes.object,
 };

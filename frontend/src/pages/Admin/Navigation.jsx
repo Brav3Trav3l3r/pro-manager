@@ -26,7 +26,7 @@ export default function Navigation() {
           className={({ isActive }) => (isActive ? styles.active : '')}
         >
           <div className={styles.icon}>
-            <PanelsTopLeft />
+            <PanelsTopLeft color="#767575" />
           </div>
           <Text weight="500">Board</Text>
         </NavLink>
@@ -36,7 +36,7 @@ export default function Navigation() {
           className={({ isActive }) => (isActive ? styles.active : '')}
         >
           <div className={styles.icon}>
-            <Database />
+            <Database color="#767575" />
           </div>
           <Text weight="500">Analytics</Text>
         </NavLink>
@@ -46,7 +46,7 @@ export default function Navigation() {
           className={({ isActive }) => (isActive ? styles.active : '')}
         >
           <div className={styles.icon}>
-            <Settings />
+            <Settings color="#767575" />
           </div>
           <Text weight="500">Settings</Text>
         </NavLink>

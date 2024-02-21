@@ -31,6 +31,11 @@ const taskSchema = new mongoose.Schema({
       message: 'Please add at least one checklist',
     },
   },
+  status: {
+    type: String,
+    enum: ['backlog', 'inProgress', 'todo', 'done'],
+    default: 'todo',
+  },
   dueDate: { type: Date },
   createdAt: {
     type: Date,

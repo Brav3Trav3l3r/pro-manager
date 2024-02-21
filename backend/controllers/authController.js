@@ -35,7 +35,7 @@ exports.login = catchAsync(async (req, res, next) => {
   res.status(200).json({
     message: 'success',
     data: {
-      info: user,
+      info: { email: user.email, name: user.name, _id: user._id },
       token,
     },
   });
@@ -56,6 +56,11 @@ exports.protect = catchAsync(async (req, res, next) => {
   );
 
   const user = await User.findOne({ _id: decoded.id });
+  // console.log(user);
+  if (!user) {
+    throw new AppError('User does not exist!', 401);
+  }
+
   req.user = user;
 
   next();

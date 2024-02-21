@@ -6,6 +6,7 @@ export const AuthContext = createContext({
   login: () => {},
   logout: () => {},
   isLoading: true,
+  updateInfo: async () => {},
 });
 
 export default function AuthProvider({ children }) {
@@ -13,7 +14,7 @@ export default function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = JSON.parse(localStorage.getItem('user'));
     if (savedUser) {
       setUser(savedUser);
     }
@@ -30,8 +31,35 @@ export default function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateInfo = async () => {
+    try {
+      const res = await fetch(import.meta.env.VITE_BACKEND_URL + '/users', {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + user.token,
+        },
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.message);
+      }
+
+      const resObj = await res.json();
+      setUser({ ...user, info: resObj.data.info });
+      localStorage.setItem(
+        'user',
+        JSON.stringify({ ...user, info: resObj.data.info })
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, isLoading, updateInfo }}
+    >
       {children}
     </AuthContext.Provider>
   );

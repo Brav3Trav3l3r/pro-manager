@@ -12,7 +12,7 @@ import styles from './styles/index.module.css';
 
 const schema = yup
   .object({
-    name: yup.string('Name is required'),
+    name: yup.string(),
     newPassword: yup.string(),
     oldPassword: yup.string(),
   })
@@ -22,7 +22,7 @@ const defaultValues = { name: '', oldPassword: '', newPassword: '' };
 
 export default function Settings() {
   const [isSafeToReset, setIsSafeToReset] = useState(false);
-  const { user } = useContext(AuthContext);
+  const { user, updateInfo } = useContext(AuthContext);
 
   const {
     register,
@@ -60,6 +60,7 @@ export default function Settings() {
 
       toast.success('Successfully updated info!');
       setIsSafeToReset(true);
+      await updateInfo();
     } catch (error) {
       toast.error(error.message);
       console.log(error.message);
@@ -75,7 +76,7 @@ export default function Settings() {
 
   return (
     <div className={styles.container}>
-      <Text step={6} weight="500">
+      <Text step={5} weight="500">
         Settings
       </Text>
 
@@ -94,6 +95,7 @@ export default function Settings() {
           placeholder={'Old Password'}
           secondaryIcon={<Eye />}
           mainIcon={<User />}
+          type="password"
         />
         <FormInput
           error={errors.name}
@@ -102,6 +104,7 @@ export default function Settings() {
           placeholder={'New Password'}
           mainIcon={<User />}
           secondaryIcon={<Eye />}
+          type="password"
         />
 
         <Button>{isSubmitting ? 'Updating...' : 'Update'}</Button>

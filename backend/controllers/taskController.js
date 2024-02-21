@@ -3,20 +3,22 @@ const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getTasks = catchAsync(async (req, res, next) => {
-  console.log(req.query);
+  console.log(req.user);
   const tasks = await Task.find({ createdBy: req.user._id });
 
   res.status(200).json({
     status: 'success',
+    results: tasks.length,
     data: { tasks },
   });
 });
 
 exports.createTask = catchAsync(async (req, res, next) => {
-  const { title, priority, checklists, dueDate, createdAt } = req.body;
+  const { title, priority, checklists, dueDate, createdAt, status } = req.body;
 
   const task = await Task.create({
     title,
+    status,
     priority,
     checklists,
     dueDate,
@@ -32,8 +34,7 @@ exports.createTask = catchAsync(async (req, res, next) => {
 
 exports.updateTask = catchAsync(async (req, res, next) => {
   const { taskId } = req.params;
-  const { title, priority, checklists, dueDate } = req.body;
-  console.log(title, priority, checklists, dueDate);
+  const { title, priority, checklists, dueDate, status } = req.body;
 
   const updatedTask = await Task.findOneAndUpdate(
     { _id: taskId, createdBy: req.user._id },
@@ -42,6 +43,7 @@ exports.updateTask = catchAsync(async (req, res, next) => {
       priority,
       checklists,
       dueDate,
+      status,
     },
     { new: true, runValidators: true }
   );
