@@ -51,3 +51,10 @@
 .logout:hover {
   background-color: #ff0b0b10;
 }
+
+.logoutActions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

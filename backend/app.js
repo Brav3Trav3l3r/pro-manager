@@ -5,8 +5,11 @@ const authRouter = require('./routes/authRoute');
 const taskRouter = require('./routes/taskRoute');
 const userRouter = require('./routes/userRoute');
 const AppError = require('./utils/AppError');
+const morgan = require('morgan');
 
 const app = express();
+
+app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 

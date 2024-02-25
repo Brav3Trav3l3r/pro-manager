@@ -1,43 +1,27 @@
-import PropTypes from 'prop-types';
-import { Text } from '../../../components/ui';
-import styles from './styles/Checklists.module.css';
 import { ChevronDown } from 'lucide-react';
+import PropTypes from 'prop-types';
+import { useContext, useState } from 'react';
+import { Text } from '../../../components/ui';
 import { SECONDARY_COLOR } from '../../../constants';
-import Checklist from './Checklist';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { useImmer } from 'use-immer';
 import { TasksContext } from '../../../store/TaskProvider';
+import Checklist from './Checklist';
+import styles from './styles/Checklists.module.css';
 
 export default function CheckLists({ task }) {
-  const [lists, setLists] = useImmer(task.checklists);
-  const dones = lists.filter((list) => list.checked);
   const [isOpen, setIsOpen] = useState(false);
-  const { updateTask } = useContext(TasksContext);
-  const ranUpdate = useRef(false);
+  const lists = task.checklists;
+  const dones = lists.filter((list) => list.checked);
+  const { minorTaskUpdate } = useContext(TasksContext);
 
-  const handleList = (list, value) => {
-    ranUpdate.current = true;
+  const handleList = async (listId, value) => {
+    const index = lists.findIndex((l) => l._id === listId);
 
-    setLists((draft) => {
-      const listToUpdate = draft.find((l) => l._id === list._id);
+    if (index < 0) return;
 
-      if (!listToUpdate) return;
-
-      listToUpdate.checked = value;
-    });
+    const copiedLists = JSON.parse(JSON.stringify(lists));
+    copiedLists[index].checked = value;
+    await minorTaskUpdate(task, { checklists: copiedLists });
   };
-
-  useEffect(() => {
-    if (!ranUpdate.current) {
-      return;
-    }
-
-    (async () => {
-      await updateTask(task, { checklists: lists });
-    })();
-
-    ranUpdate.current = false;
-  }, [task, lists, updateTask]);
 
   return (
     <div className={styles.container}>

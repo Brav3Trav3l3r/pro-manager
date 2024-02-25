@@ -1,4 +1,5 @@
 import Text from './Text';
 import Button from './Button';
+import Modal from './Modal';
 
-export { Text, Button };
+export { Text, Button, Modal };

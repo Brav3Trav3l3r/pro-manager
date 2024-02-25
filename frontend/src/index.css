@@ -7,6 +7,8 @@
 
   --primary: #17a2b8;
   --primary-focus: #1baec5;
+  --error: red;
+  --error-focus: rgb(236, 2, 2);
   --neutral: #eef2f5;
 
   font-synthesis: none;

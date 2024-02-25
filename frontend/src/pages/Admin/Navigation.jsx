@@ -1,63 +1,83 @@
 import { Database, LogOut, PanelsTopLeft, Settings } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import logo from '../../assets/kanban_logo.png';
-import { Text } from '../../components/ui';
+import { Button, Text } from '../../components/ui';
 import styles from './styles/Navigation.module.css';
 import { useContext } from 'react';
 import { AuthContext } from '../../store/AuthProvider';
+import useModal from '../../hooks/useModal';
+import Modal from '../../components/ui/Modal';
 
 export default function Navigation() {
   const { logout } = useContext(AuthContext);
+  const { isOpen, toggleModal } = useModal();
 
   return (
-    <div className={styles.container}>
-      <div className={styles.logo}>
-        <div className={styles.image}>
-          <img src={logo} alt="Pro manage" />
+    <>
+      <div className={styles.container}>
+        <div className={styles.logo}>
+          <div className={styles.image}>
+            <img src={logo} alt="Pro manage" />
+          </div>
+          <Text step={6} weight="600">
+            Pro Manage
+          </Text>
         </div>
-        <Text step={6} weight="600">
-          Pro Manage
-        </Text>
+
+        <nav className={styles.links}>
+          <NavLink
+            to="/"
+            className={({ isActive }) => (isActive ? styles.active : '')}
+          >
+            <div className={styles.icon}>
+              <PanelsTopLeft color="#767575" />
+            </div>
+            <Text weight="500">Board</Text>
+          </NavLink>
+
+          <NavLink
+            to={'analytics'}
+            className={({ isActive }) => (isActive ? styles.active : '')}
+          >
+            <div className={styles.icon}>
+              <Database color="#767575" />
+            </div>
+            <Text weight="500">Analytics</Text>
+          </NavLink>
+
+          <NavLink
+            to={'settings'}
+            className={({ isActive }) => (isActive ? styles.active : '')}
+          >
+            <div className={styles.icon}>
+              <Settings color="#767575" />
+            </div>
+            <Text weight="500">Settings</Text>
+          </NavLink>
+        </nav>
+
+        <div onClick={toggleModal} className={styles.logout}>
+          <div className={styles.icon}>
+            <LogOut />
+          </div>
+          <Text>Logout</Text>
+        </div>
       </div>
 
-      <nav className={styles.links}>
-        <NavLink
-          to="/"
-          className={({ isActive }) => (isActive ? styles.active : '')}
-        >
-          <div className={styles.icon}>
-            <PanelsTopLeft color="#767575" />
-          </div>
-          <Text weight="500">Board</Text>
-        </NavLink>
+      {isOpen && (
+        <Modal toggleModal={toggleModal}>
+          <Text step={4} weight="500" style={{ textAlign: 'center' }}>
+            Are you sure want to logout?
+          </Text>
 
-        <NavLink
-          to={'analytics'}
-          className={({ isActive }) => (isActive ? styles.active : '')}
-        >
-          <div className={styles.icon}>
-            <Database color="#767575" />
+          <div className={styles.logoutActions}>
+            <Button onClick={logout}>Yes, Logout</Button>
+            <Button version="error" onClick={toggleModal} >
+              Canel
+            </Button>
           </div>
-          <Text weight="500">Analytics</Text>
-        </NavLink>
-
-        <NavLink
-          to={'settings'}
-          className={({ isActive }) => (isActive ? styles.active : '')}
-        >
-          <div className={styles.icon}>
-            <Settings color="#767575" />
-          </div>
-          <Text weight="500">Settings</Text>
-        </NavLink>
-      </nav>
-
-      <div onClick={logout} className={styles.logout}>
-        <div className={styles.icon}>
-          <LogOut />
-        </div>
-        <Text>Logout</Text>
-      </div>
-    </div>
+        </Modal>
+      )}
+    </>
   );
 }

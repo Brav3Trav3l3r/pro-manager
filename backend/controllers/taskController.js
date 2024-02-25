@@ -3,13 +3,26 @@ const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getTasks = catchAsync(async (req, res, next) => {
-  console.log(req.user);
   const tasks = await Task.find({ createdBy: req.user._id });
 
   res.status(200).json({
     status: 'success',
     results: tasks.length,
     data: { tasks },
+  });
+});
+
+exports.getTask = catchAsync(async (req, res, next) => {
+  const { taskId } = req.params;
+  const task = await Task.findById(taskId);
+
+  if (!task) {
+    throw new AppError('Task not found', 404);
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: { task },
   });
 });
 
@@ -60,6 +73,10 @@ exports.updateTask = catchAsync(async (req, res, next) => {
 
 exports.deleteTask = catchAsync(async (req, res, next) => {
   const { taskId } = req.params;
+
+  if (!taskId) {
+    throw new AppError('Please provide a taskId', 400);
+  }
 
   const task = await Task.findOneAndDelete({
     _id: taskId,

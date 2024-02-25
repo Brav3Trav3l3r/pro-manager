@@ -8,6 +8,7 @@ import AuthProvider from './store/AuthProvider';
 import Board from './pages/Admin/Board';
 import Analytics from './pages/Admin/Analytics';
 import Settings from './pages/Admin/Settings';
+import TaskProvider from './store/TaskProvider';
 
 const router = createBrowserRouter([
   {
@@ -18,8 +19,22 @@ const router = createBrowserRouter([
       </AuthProvider>
     ),
     children: [
-      { index: true, element: <Board /> },
-      { path: 'analytics', element: <Analytics /> },
+      {
+        index: true,
+        element: (
+          <TaskProvider>
+            <Board />
+          </TaskProvider>
+        ),
+      },
+      {
+        path: 'analytics',
+        element: (
+          <TaskProvider>
+            <Analytics />
+          </TaskProvider>
+        ),
+      },
       { path: 'settings', element: <Settings /> },
     ],
   },
@@ -42,7 +57,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/public',
+    path: '/tasks/:taskId',
     element: <PublicLayout />,
   },
 ]);

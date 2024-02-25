@@ -54,13 +54,13 @@
 }
 
 .listboxOption {
-  padding: 0.75rem 3rem 0.75rem 0.75rem;
+  padding: 0.5rem 3rem 0.5rem 0.5rem;
   display: flex;
   gap: 0.5rem;
   white-space: nowrap;
   cursor: pointer;
   margin: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.325rem;
 }
 
 .checkIcon {

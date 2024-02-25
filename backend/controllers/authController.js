@@ -56,7 +56,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   );
 
   const user = await User.findOne({ _id: decoded.id });
-  // console.log(user);
   if (!user) {
     throw new AppError('User does not exist!', 401);
   }

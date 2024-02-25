@@ -10,7 +10,7 @@ export default function Checklist({ list, onChange }) {
         name=""
         id=""
         checked={list.checked}
-        onChange={(e) => onChange(list, e.target.checked)}
+        onChange={(e) => onChange(list._id, e.target.checked)}
       />
       <Text>{list.title}</Text>
     </div>

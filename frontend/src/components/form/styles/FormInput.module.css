@@ -5,9 +5,9 @@
 
 .input {
   display: flex;
+  align-items: center;
   border: 2px solid #d0d0d0;
   padding: 0.5rem;
-  align-items: center;
   border-radius: 0.5rem;
 }
 
