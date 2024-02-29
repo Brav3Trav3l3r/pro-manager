@@ -22,7 +22,7 @@ const handleValidationError = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
     errors: errorObj,
-    message: 'Validation error',
+    message: `Validation error: ${err.message}`,
   });
 };
 
