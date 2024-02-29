@@ -10,10 +10,13 @@ import PropTypes from 'prop-types';
 import { AuthContext } from './AuthProvider';
 import toast from 'react-hot-toast';
 import { useImmer } from 'use-immer';
+import useFetch from '../hooks/useFetch';
 
 export const TasksContext = createContext({
   tasks: {},
   isLoading: false,
+  selectedDateRange: {},
+  setSelectedDateRange: () => {},
   fetchTasks: async () => {},
   minorTaskUpdate: async () => {},
   majorTaskUpdate: async () => {},
@@ -21,20 +24,31 @@ export const TasksContext = createContext({
   deleteTask: async () => {},
 });
 
+const options = [
+  { id: 1, name: 'Today', value: 1 },
+  { id: 2, name: 'This week', value: 7 },
+  { id: 3, name: 'This month', value: 30 },
+];
+
 export default function TaskProvider({ children }) {
   const [tasks, setTasks] = useImmer(null);
+  const [selectedDateRange, setSelectedDateRange] = useState(options[1]);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const { token } = user;
+  const { value } = selectedDateRange;
 
   const fetchTasks = useCallback(async () => {
     try {
-      const res = await fetch(import.meta.env.VITE_BACKEND_URL + '/tasks', {
-        method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      });
+      const res = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/tasks?range=' + value,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: 'Bearer ' + token,
+          },
+        }
+      );
 
       if (!res.ok) {
         const errObj = await res.json();
@@ -47,7 +61,13 @@ export default function TaskProvider({ children }) {
     } catch (error) {
       toast.error(error.message);
     }
-  }, [token, setTasks]);
+  }, [token, setTasks, value]);
+
+  useEffect(() => {
+    (async () => {
+      fetchTasks();
+    })();
+  }, [fetchTasks]);
 
   ////////////////////////////////
   // For updates made on card itself
@@ -246,13 +266,6 @@ export default function TaskProvider({ children }) {
     },
     [deleteTaskFromDb, fetchTasks]
   );
-
-  useEffect(() => {
-    (async () => {
-      fetchTasks();
-    })();
-  }, [fetchTasks]);
-
   return (
     <TasksContext.Provider
       value={useMemo(() => {
@@ -264,6 +277,8 @@ export default function TaskProvider({ children }) {
           addTask,
           majorTaskUpdate,
           deleteTask,
+          selectedDateRange,
+          setSelectedDateRange,
         };
       }, [
         tasks,
@@ -273,6 +288,8 @@ export default function TaskProvider({ children }) {
         fetchTasks,
         addTask,
         majorTaskUpdate,
+        selectedDateRange,
+        setSelectedDateRange,
       ])}
     >
       {children}

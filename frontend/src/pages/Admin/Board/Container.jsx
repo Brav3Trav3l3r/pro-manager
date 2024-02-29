@@ -1,13 +1,38 @@
-import PropTypes from 'prop-types';
 import { CopyMinus, Plus } from 'lucide-react';
-import styles from './styles/Container.module.css';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { Modal, Text } from '../../../components/ui';
-import Card from './Card';
 import useModal from '../../../hooks/useModal';
+import Card from './Card';
 import TaskForm from './TaskForm';
+import styles from './styles/Container.module.css';
 
 export default function Container({ tasks, category }) {
   const { isOpen: isCreateOpen, toggleModal: toggleCreateModal } = useModal();
+  const [openDisclosures, setOpenDisclosures] = useState([]);
+
+  const closeDisclosure = (id) => {
+    setOpenDisclosures(
+      openDisclosures.filter((disclosure) => disclosure !== id)
+    );
+  };
+
+  const openDisclosure = (id) => {
+    const updatedDisclosures = [...openDisclosures, id];
+    setOpenDisclosures(updatedDisclosures);
+  };
+
+  const toggleDisclosure = (id) => {
+    if (openDisclosures.includes(id)) {
+      closeDisclosure(id);
+    } else {
+      openDisclosure(id);
+    }
+  };
+
+  const closeAllDisclosure = () => {
+    setOpenDisclosures([]);
+  };
 
   return (
     <>
@@ -16,16 +41,29 @@ export default function Container({ tasks, category }) {
           <Text step={4} weight="500">
             {category.title}
           </Text>
-          <div onClick={toggleCreateModal} className={styles.icons}>
-            {category.title == 'To do' && <Plus size={20} color="#767575" />}
-            <CopyMinus size={20} color="#767575" />
+          <div className={styles.icons}>
+            {category.title == 'To do' && (
+              <Plus size={20} color="#767575" onClick={toggleCreateModal} />
+            )}
+            <CopyMinus
+              size={20}
+              color={openDisclosures.length ? '#17a2b8' : '#767575'}
+              onClick={closeAllDisclosure}
+            />
           </div>
         </div>
 
         <div className={styles.tasks}>
           {tasks.map((task) => {
             if (task.status == category.value) {
-              return <Card key={task._id} task={task} />;
+              return (
+                <Card
+                  key={task._id}
+                  task={task}
+                  isOpen={openDisclosures?.includes(task._id)}
+                  toggleDisclosure={() => toggleDisclosure(task._id)}
+                />
+              );
             }
           })}
         </div>

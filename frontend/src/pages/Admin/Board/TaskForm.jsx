@@ -1,7 +1,7 @@
 import { RadioGroup } from '@headlessui/react';
 import { Trash2 } from 'lucide-react';
 import PropTypes from 'prop-types';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { useImmer } from 'use-immer';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Text } from '../../../components/ui';
@@ -21,8 +21,6 @@ export default function TaskForm({
 }) {
   const [task, setTask] = useImmer(defaultTask);
   const { majorTaskUpdate, addTask, isLoading } = useContext(TasksContext);
-
-  useEffect(() => console.log(task), [task]);
 
   const handleAddTask = async () => {
     await addTask(task);
@@ -84,6 +82,12 @@ export default function TaskForm({
       if (!list) return;
 
       list.title = value;
+    });
+  };
+
+  const updateDate = (value) => {
+    setTask((draft) => {
+      draft.dueDate = value;
     });
   };
 
@@ -201,7 +205,20 @@ export default function TaskForm({
 
       <div className={styles.buttonGroup}>
         <div className={styles.datePicker}>
-          <Button>Select due date</Button>
+          {task.dueDate ? (
+            <input
+              id="dueDatePicker"
+              value={new Date(task.dueDate).toISOString().split('T')[0]}
+              type="date"
+              onChange={(e) => updateDate(new Date(e.target.value))}
+            />
+          ) : (
+            <input
+              id="dueDatePicker"
+              type="date"
+              onChange={(e) => updateDate(new Date(e.target.value))}
+            />
+          )}
         </div>
 
         <div className={styles.actions}>

@@ -38,7 +38,9 @@
 
 .categoryBadges {
   display: flex;
+  flex: 1;
   gap: 0.5rem;
+  justify-content: flex-end;
 }
 
 .menu {

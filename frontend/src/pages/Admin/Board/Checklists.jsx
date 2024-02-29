@@ -1,14 +1,13 @@
 import { ChevronDown } from 'lucide-react';
 import PropTypes from 'prop-types';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Text } from '../../../components/ui';
 import { SECONDARY_COLOR } from '../../../constants';
 import { TasksContext } from '../../../store/TaskProvider';
 import Checklist from './Checklist';
 import styles from './styles/Checklists.module.css';
 
-export default function CheckLists({ task }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function CheckLists({ task, isOpen, toggleDisclosure }) {
   const lists = task.checklists;
   const dones = lists.filter((list) => list.checked);
   const { minorTaskUpdate } = useContext(TasksContext);
@@ -30,10 +29,7 @@ export default function CheckLists({ task }) {
           Checklits ({dones.length + '/' + lists.length})
         </Text>
 
-        <button
-          className={styles.button}
-          onClick={() => setIsOpen((prev) => !prev)}
-        >
+        <button className={styles.button} onClick={toggleDisclosure}>
           <ChevronDown
             className={isOpen && styles.rotate}
             color={SECONDARY_COLOR}
@@ -54,4 +50,6 @@ export default function CheckLists({ task }) {
 
 CheckLists.propTypes = {
   task: PropTypes.object,
+  isOpen: PropTypes.bool.isRequired,
+  toggleDisclosure: PropTypes.func.isRequired,
 };

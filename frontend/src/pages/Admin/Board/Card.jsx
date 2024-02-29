@@ -18,7 +18,7 @@ const categories = [
   { id: 4, title: 'Done', value: 'done' },
 ];
 
-export default function Card({ task }) {
+export default function Card({ task, isOpen, toggleDisclosure }) {
   const { minorTaskUpdate, isLoading, deleteTask } = useContext(TasksContext);
   const { isOpen: deleteIsOpen, toggleModal: toggleDeleteModal } = useModal();
   const { isOpen: editIsOpen, toggleModal: toggleEditModal } = useModal();
@@ -83,16 +83,34 @@ export default function Card({ task }) {
           </div>
         </div>
 
-        <div className={styles.title}>
-          <Text step={5} weight="500">
-            {task.title}
-          </Text>
-        </div>
+        <Text step={5} weight="500">
+          {task.title}
+        </Text>
 
-        <CheckLists task={task} checklists={task.checklists} />
+        <CheckLists
+          isOpen={isOpen}
+          toggleDisclosure={toggleDisclosure}
+          task={task}
+          checklists={task.checklists}
+        />
 
         <div className={styles.badges}>
-          <Badge variant={task.status == 'done' ? 'success' : ''}>Feb 20</Badge>
+          {task.dueDate && (
+            <Badge
+              variant={
+                task.status == 'done'
+                  ? 'success'
+                  : task.isExpired
+                  ? 'error'
+                  : ''
+              }
+            >
+              {new Date(task.dueDate).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+              })}
+            </Badge>
+          )}
           <div className={styles.categoryBadges}>
             {categories.map((category) => {
               if (category.value !== task.status) {
@@ -145,4 +163,6 @@ export default function Card({ task }) {
 
 Card.propTypes = {
   task: PropTypes.object.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  toggleDisclosure: PropTypes.func.isRequired,
 };

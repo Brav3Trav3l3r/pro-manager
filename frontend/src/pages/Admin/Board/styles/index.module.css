@@ -61,6 +61,8 @@
   cursor: pointer;
   margin: 0.5rem;
   border-radius: 0.325rem;
+  position: relative;
+  z-index: 40;
 }
 
 .checkIcon {

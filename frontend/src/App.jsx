@@ -29,11 +29,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'analytics',
-        element: (
-          <TaskProvider>
-            <Analytics />
-          </TaskProvider>
-        ),
+        element: <Analytics />,
       },
       { path: 'settings', element: <Settings /> },
     ],

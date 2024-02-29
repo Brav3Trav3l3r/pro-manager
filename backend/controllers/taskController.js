@@ -1,9 +1,27 @@
 const Task = require('../model/taskModel');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
+const moment = require('moment');
 
 exports.getTasks = catchAsync(async (req, res, next) => {
-  const tasks = await Task.find({ createdBy: req.user._id });
+  const query = req.query;
+  let dbQuery = Task.find({ createdBy: req.user._id });
+
+  const today = moment().endOf('day');
+  let range = 7;
+
+  if (query.range) {
+    range = query.range;
+  }
+
+  dbQuery = dbQuery.find({
+    createdAt: {
+      $lte: today.toDate(),
+      $gt: today.clone().subtract(range, 'days').toDate(),
+    },
+  });
+
+  const tasks = await dbQuery;
 
   res.status(200).json({
     status: 'success',
@@ -89,5 +107,43 @@ exports.deleteTask = catchAsync(async (req, res, next) => {
 
   res.status(204).json({
     status: 'success',
+  });
+});
+
+exports.analytics = catchAsync(async (req, res, next) => {
+  const tasks = await Task.find({ createdBy: req.user._id });
+
+  // const status = {
+  //   backlog: { name: 'Backlog Tasks', count: 0 },
+  //   todo: { name: 'To-do Tasks', count: 0 },
+  //   inProgress: { name: 'In-Progress Tasks', count: 0 },
+  //   done: { name: 'Completed Tasks', count: 0 },
+  // };
+
+  const status = {
+    backlog: 0,
+    todo: 0,
+    inProgress: 0,
+    done: 0,
+  };
+
+  const priorities = {
+    low: 0,
+    high: 0,
+    moderate: 0,
+    due: 0,
+  };
+
+  tasks.forEach((el) => {
+    status[el.status]++;
+    priorities[el.priority]++;
+    if (el.isExpired) {
+      priorities.due++;
+    }
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: { status, priorities },
   });
 });

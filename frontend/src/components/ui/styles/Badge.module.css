@@ -5,11 +5,12 @@
   border-radius: 0.325rem;
   cursor: pointer;
   composes: shadow from global;
+  max-width: fit-content;
 }
 
 .error {
   background-color: #cf3636;
-  background-color: white;
+  color: white;
 }
 
 .success {

@@ -1,5 +1,5 @@
 import { Database, LogOut, PanelsTopLeft, Settings } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import logo from '../../assets/kanban_logo.png';
 import { Button, Text } from '../../components/ui';
 import styles from './styles/Navigation.module.css';
@@ -19,9 +19,11 @@ export default function Navigation() {
           <div className={styles.image}>
             <img src={logo} alt="Pro manage" />
           </div>
-          <Text step={6} weight="600">
-            Pro Manage
-          </Text>
+          <Link to="/">
+            <Text step={6} weight="600">
+              Pro Manage
+            </Text>
+          </Link>
         </div>
 
         <nav className={styles.links}>
@@ -72,7 +74,7 @@ export default function Navigation() {
 
           <div className={styles.logoutActions}>
             <Button onClick={logout}>Yes, Logout</Button>
-            <Button version="error" onClick={toggleModal} >
+            <Button version="error" onClick={toggleModal}>
               Canel
             </Button>
           </div>

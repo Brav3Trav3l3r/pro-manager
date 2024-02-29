@@ -1,5 +1,8 @@
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import logo from '../../assets/kanban_logo.png';
 import useFetch from '../../hooks/useFetch';
+import PublicCard from './PublicCard';
+import styles from './styles/index.module.css';
 
 export default function PublicLayout() {
   const { taskId } = useParams();
@@ -17,8 +20,22 @@ export default function PublicLayout() {
   }
 
   if (data) {
-    content = <p>{data.task.title}</p>;
+    content = <PublicCard task={data.task} />;
   }
 
-  return <div>{content}</div>;
+  return (
+    <div className={styles.container}>
+      <div className={styles.logo}>
+        <div className={styles.image}>
+          <img src={logo} alt="Pro manage" />
+        </div>
+
+        <div className={styles.title}>
+          <Link to='/'>Pro Manage</Link>
+        </div>
+      </div>
+
+      <main>{content}</main>
+    </div>
+  );
 }

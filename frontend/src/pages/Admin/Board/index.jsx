@@ -1,22 +1,22 @@
 import { Listbox } from '@headlessui/react';
 import { ChevronDown } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Text } from '../../../components/ui';
 import { AuthContext } from '../../../store/AuthProvider';
-import styles from './styles/index.module.css';
-import TasksContainer from './TasksContainer';
+import { TasksContext } from '../../../store/TaskProvider';
 import getFormattedDate from '../../../utils/getFormatedDate';
+import TasksContainer from './TasksContainer';
+import styles from './styles/index.module.css';
 
 const options = [
-  { id: 1, name: 'Today' },
-  { id: 2, name: 'This week' },
-  { id: 3, name: 'This month' },
+  { id: 1, name: 'Today', value: 1 },
+  { id: 2, name: 'This week', value: 7 },
+  { id: 3, name: 'This month', value: 30 },
 ];
 
 export default function Board() {
   const { user } = useContext(AuthContext);
-  const [selectedOption, setSelectedOption] = useState(options[1]);
-
+  const { selectedDateRange, setSelectedDateRange } = useContext(TasksContext);
   const dateString = getFormattedDate(new Date());
 
   return (
@@ -38,13 +38,13 @@ export default function Board() {
         <Listbox
           as="div"
           className={styles.listbox}
-          value={selectedOption}
-          onChange={setSelectedOption}
+          value={selectedDateRange}
+          onChange={setSelectedDateRange}
         >
           {({ open }) => (
             <>
               <Listbox.Button className={styles.listboxButton}>
-                {selectedOption.name}
+                {selectedDateRange.name}
                 <ChevronDown size={16} className={open ? styles.rotate : ''} />
               </Listbox.Button>
 
