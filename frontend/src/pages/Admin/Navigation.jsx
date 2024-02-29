@@ -74,8 +74,8 @@ export default function Navigation() {
 
           <div className={styles.logoutActions}>
             <Button onClick={logout}>Yes, Logout</Button>
-            <Button version="error" onClick={toggleModal}>
-              Canel
+            <Button variant="outline" color="error" onClick={toggleModal}>
+              Cancel
             </Button>
           </div>
         </Modal>

@@ -1,12 +1,13 @@
 import { RadioGroup } from '@headlessui/react';
 import { Trash2 } from 'lucide-react';
 import PropTypes from 'prop-types';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useImmer } from 'use-immer';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Text } from '../../../components/ui';
 import { TasksContext } from '../../../store/TaskProvider';
 import styles from './styles/TaskForm.module.css';
+import toast from 'react-hot-toast';
 
 const dummyTask = {
   title: '',
@@ -20,16 +21,34 @@ export default function TaskForm({
   action = 'add',
 }) {
   const [task, setTask] = useImmer(defaultTask);
-  const { majorTaskUpdate, addTask, isLoading } = useContext(TasksContext);
+  const { majorTaskUpdate, addTask } = useContext(TasksContext);
+  const [isLoading, setIsLoading] = useState(false);
+
+  ////////////////////////////////
+  // DB and Context modifiers
 
   const handleAddTask = async () => {
-    await addTask(task);
-    toggleModal();
+    setIsLoading(true);
+    try {
+      await addTask(task);
+      toggleModal();
+      toast.success('Successfully added task!');
+    } catch (err) {
+      toast.error(err.message);
+    }
+    setIsLoading(false);
   };
 
   const handleUpdateTask = async () => {
-    await majorTaskUpdate(task._id, task);
-    toggleModal();
+    setIsLoading(true);
+    try {
+      await majorTaskUpdate(task._id, task);
+      toggleModal();
+      toast.success('Successfully updated task!');
+    } catch (err) {
+      toast.error(err.message);
+    }
+    setIsLoading(false);
   };
 
   ////////////////////////////////
@@ -197,7 +216,7 @@ export default function TaskForm({
         </div>
 
         <div className={styles.addButton}>
-          <Button onClick={addList} version="ghost">
+          <Button onClick={addList} variant="ghost">
             + Add New
           </Button>
         </div>
@@ -222,7 +241,7 @@ export default function TaskForm({
         </div>
 
         <div className={styles.actions}>
-          <Button version="error" onClick={toggleModal}>
+          <Button variant="outline" color="error" onClick={toggleModal}>
             Cancel
           </Button>
           <Button onClick={action == 'add' ? handleAddTask : handleUpdateTask}>

@@ -10,12 +10,17 @@ import PropTypes from 'prop-types';
 import { AuthContext } from './AuthProvider';
 import toast from 'react-hot-toast';
 import { useImmer } from 'use-immer';
-import useFetch from '../hooks/useFetch';
+
+const options = [
+  { id: 1, name: 'Today', value: 1 },
+  { id: 2, name: 'This week', value: 7 },
+  { id: 3, name: 'This month', value: 30 },
+];
 
 export const TasksContext = createContext({
-  tasks: {},
+  tasks: [],
   isLoading: false,
-  selectedDateRange: {},
+  selectedDateRange: { id: 2, name: 'This week', value: 7 },
   setSelectedDateRange: () => {},
   fetchTasks: async () => {},
   minorTaskUpdate: async () => {},
@@ -23,12 +28,6 @@ export const TasksContext = createContext({
   addTask: async () => {},
   deleteTask: async () => {},
 });
-
-const options = [
-  { id: 1, name: 'Today', value: 1 },
-  { id: 2, name: 'This week', value: 7 },
-  { id: 3, name: 'This month', value: 30 },
-];
 
 export default function TaskProvider({ children }) {
   const [tasks, setTasks] = useImmer(null);
@@ -39,6 +38,7 @@ export default function TaskProvider({ children }) {
   const { value } = selectedDateRange;
 
   const fetchTasks = useCallback(async () => {
+    setIsLoading(true);
     try {
       const res = await fetch(
         import.meta.env.VITE_BACKEND_URL + '/tasks?range=' + value,
@@ -61,6 +61,7 @@ export default function TaskProvider({ children }) {
     } catch (error) {
       toast.error(error.message);
     }
+    setIsLoading(false);
   }, [token, setTasks, value]);
 
   useEffect(() => {
@@ -74,26 +75,22 @@ export default function TaskProvider({ children }) {
 
   const minorDbUpdate = useCallback(
     async (task, updates) => {
-      try {
-        const res = await fetch(
-          import.meta.env.VITE_BACKEND_URL + '/tasks/' + task._id,
-          {
-            method: 'PATCH',
-            body: JSON.stringify(updates),
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + token,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          const errObj = await res.json();
-          console.log(errObj);
-          throw new Error(errObj.message);
+      const res = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/tasks/' + task._id,
+        {
+          method: 'PATCH',
+          body: JSON.stringify(updates),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
         }
-      } catch (error) {
-        toast.error(error.message);
+      );
+
+      if (!res.ok) {
+        const errObj = await res.json();
+        console.log(errObj);
+        throw new Error(errObj.message);
       }
     },
     [token]
@@ -136,30 +133,25 @@ export default function TaskProvider({ children }) {
         }
       });
 
-      try {
-        const res = await fetch(
-          import.meta.env.VITE_BACKEND_URL + '/tasks/' + taskId,
-          {
-            method: 'PATCH',
-            body: JSON.stringify(copyTask),
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + token,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          const errObj = await res.json();
-          throw new Error(errObj.message);
+      const res = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/tasks/' + taskId,
+        {
+          method: 'PATCH',
+          body: JSON.stringify(copyTask),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+          },
         }
+      );
 
-        const resObj = await res.json();
-        toast.success('Successfully updated task!');
-        return resObj.data.task;
-      } catch (error) {
-        toast.error(error.message);
+      if (!res.ok) {
+        const errObj = await res.json();
+        throw new Error(errObj.message);
       }
+
+      const resObj = await res.json();
+      return resObj.data.task;
     },
     [token]
   );
@@ -183,7 +175,6 @@ export default function TaskProvider({ children }) {
 
   const addTaskToDb = useCallback(
     async (task) => {
-      console.log(task);
       // deep copy and remove _id from lists
       const copyTask = JSON.parse(JSON.stringify(task));
       copyTask.checklists.forEach((list) => {
@@ -191,30 +182,22 @@ export default function TaskProvider({ children }) {
         delete list.isNew;
       });
 
-      console.log('copy: ', copyTask);
+      const res = await fetch(import.meta.env.VITE_BACKEND_URL + '/tasks/', {
+        method: 'POST',
+        body: JSON.stringify(copyTask),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+      });
 
-      try {
-        const res = await fetch(import.meta.env.VITE_BACKEND_URL + '/tasks/', {
-          method: 'POST',
-          body: JSON.stringify(copyTask),
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-          },
-        });
-
-        if (!res.ok) {
-          const errObj = await res.json();
-          throw new Error(errObj.message);
-        }
-
-        const resObj = await res.json();
-        toast.success('Successfully added task!');
-        return resObj.data.task;
-      } catch (error) {
-        console.log(error);
-        toast.error(error.message);
+      if (!res.ok) {
+        const errObj = await res.json();
+        throw new Error(errObj.message);
       }
+
+      const resObj = await res.json();
+      return resObj.data.task;
     },
     [token]
   );
@@ -235,25 +218,19 @@ export default function TaskProvider({ children }) {
 
   const deleteTaskFromDb = useCallback(
     async (taskId) => {
-      try {
-        const res = await fetch(
-          import.meta.env.VITE_BACKEND_URL + '/tasks/' + taskId,
-          {
-            method: 'DELETE',
-            headers: {
-              Authorization: 'Bearer ' + token,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          const errObj = await res.json();
-          throw new Error(errObj.message);
+      const res = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/tasks/' + taskId,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: 'Bearer ' + token,
+          },
         }
+      );
 
-        toast.success('Deleted task successfully');
-      } catch (error) {
-        toast.error(error.message);
+      if (!res.ok) {
+        const errObj = await res.json();
+        throw new Error(errObj.message);
       }
     },
     [token]
@@ -262,10 +239,14 @@ export default function TaskProvider({ children }) {
   const deleteTask = useCallback(
     async (taskId) => {
       await deleteTaskFromDb(taskId);
-      await fetchTasks();
+
+      setTasks((draft) => {
+        return draft.filter((task) => task._id !== taskId);
+      });
     },
-    [deleteTaskFromDb, fetchTasks]
+    [deleteTaskFromDb, setTasks]
   );
+
   return (
     <TasksContext.Provider
       value={useMemo(() => {

@@ -6,6 +6,7 @@ import { SECONDARY_COLOR } from '../../../constants';
 import { TasksContext } from '../../../store/TaskProvider';
 import Checklist from './Checklist';
 import styles from './styles/Checklists.module.css';
+import toast from 'react-hot-toast';
 
 export default function CheckLists({ task, isOpen, toggleDisclosure }) {
   const lists = task.checklists;
@@ -19,7 +20,12 @@ export default function CheckLists({ task, isOpen, toggleDisclosure }) {
 
     const copiedLists = JSON.parse(JSON.stringify(lists));
     copiedLists[index].checked = value;
-    await minorTaskUpdate(task, { checklists: copiedLists });
+    
+    try {
+      await minorTaskUpdate(task, { checklists: copiedLists });
+    } catch (err) {
+      toast.error(err.message);
+    }
   };
 
   return (

@@ -7,7 +7,7 @@ const checkListSchecma = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
+    default: '',
   },
 });
 
@@ -40,7 +40,7 @@ const taskSchema = new mongoose.Schema(
     dueDate: { type: Date },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     createdBy: mongoose.ObjectId,
   },

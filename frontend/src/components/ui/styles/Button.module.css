@@ -17,46 +17,49 @@
     0 1.2px 3.6px 0 rgb(0 0 0 / 11%);
 }
 
-/* versions */
-
+/* color */
 .primary {
   background-color: var(--primary);
-  color: #fff;
+  border: 2px solid var(--primary);
+  color: white;
 }
 
-.primary:hover {
-  background-color: var(--primary-focus);
+.success {
+  background-color: var(--success);
+  border: 2px solid var(--success);
+  color: white;
 }
 
 .error {
-  color: var(--error);
-  background-color: rgba(255, 0, 0, 0.139);
+  background-color: var(--error);
+  border: 2px solid var(--error);
+  color: white;
 }
 
-.error:hover {
+/* variant */
+
+.outline.primary {
+  background-color: transparent;
+  color: var(--primary);
+}
+
+.outline.success {
+  background-color: transparent;
+  color: var(--success);
+}
+
+.outline.error {
+  background-color: transparent;
   color: var(--error);
-  background-color: rgba(255, 0, 0, 0.203);
 }
 
 .ghost {
-  color: inherit;
   background-color: transparent;
+  border-color: transparent;
+  color: inherit;
   box-shadow: none;
 }
 
 .ghost:hover {
   background-color: var(--neutral);
-}
-
-/* variant */
-
-.outline {
-  background-color: transparent;
-  color: inherit;
-}
-
-.outline:hover {
-  background-color: inherit;
-  border: 2px solid transparent;
-  color: inherit;
 }

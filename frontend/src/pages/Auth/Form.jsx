@@ -18,7 +18,7 @@ export default function Form({ title, children }) {
           {title === 'Register' ? 'Have an account ?' : 'Have no account yet?'}
         </Text>
         <Link to={title == 'Register' ? '..' : 'register'}>
-          <Button variant="outline">
+          <Button variant="outline" >
             {title == 'Register' ? 'Login' : 'Register'}
           </Button>
         </Link>

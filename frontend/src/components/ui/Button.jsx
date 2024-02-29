@@ -2,20 +2,15 @@ import PropTypes from 'prop-types';
 import styles from './styles/Button.module.css';
 
 export default function Button({
-  children = 'Button',
-  variant = 'solid',
-  version = 'primary',
-  style,
+  children,
+  color = 'primary',
+  variant,
   onClick,
 }) {
-  const buttonVariant = styles[variant];
-  const buttonVersion = styles[version];
-
   return (
     <button
       onClick={onClick}
-      style={{ ...style }}
-      className={`${buttonVariant} ${buttonVersion} ${styles.button}`}
+      className={`${styles[color]} ${styles[variant]} ${styles.button}`}
     >
       {children}
     </button>
@@ -24,8 +19,8 @@ export default function Button({
 
 Button.propTypes = {
   children: PropTypes.string,
+  toggle: PropTypes.func,
+  color: PropTypes.oneOf(['primary', 'error', 'success']),
+  variant: PropTypes.oneOf(['outline', 'ghost']),
   onClick: PropTypes.func,
-  style: PropTypes.object,
-  variant: PropTypes.oneOf(['solid', 'outline', 'ghost']),
-  version: PropTypes.oneOf(['error', 'primary', 'success', 'ghost']),
 };

@@ -1,7 +1,7 @@
 import { Menu } from '@headlessui/react';
 import { MoreHorizontal } from 'lucide-react';
 import PropTypes from 'prop-types';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Button, Modal, Text } from '../../../components/ui';
 import Badge from '../../../components/ui/Badge';
 import useModal from '../../../hooks/useModal';
@@ -10,6 +10,7 @@ import CheckLists from './Checklists';
 import TaskForm from './TaskForm';
 import styles from './styles/Card.module.css';
 import copyLink from '../../../utils/copyLink';
+import toast from 'react-hot-toast';
 
 const categories = [
   { id: 1, title: 'Backlog', value: 'backlog' },
@@ -19,9 +20,30 @@ const categories = [
 ];
 
 export default function Card({ task, isOpen, toggleDisclosure }) {
-  const { minorTaskUpdate, isLoading, deleteTask } = useContext(TasksContext);
+  const { minorTaskUpdate, deleteTask } = useContext(TasksContext);
   const { isOpen: deleteIsOpen, toggleModal: toggleDeleteModal } = useModal();
   const { isOpen: editIsOpen, toggleModal: toggleEditModal } = useModal();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleTaskDelete = (taskId) => {
+    setIsLoading(true);
+    try {
+      deleteTask(taskId);
+      toggleDeleteModal();
+      toast.success('Deleted task successfully');
+    } catch (err) {
+      toast.error(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  const handleMinorUpdates = (updates) => {
+    try {
+      minorTaskUpdate(task, updates);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   return (
     <>
@@ -118,7 +140,7 @@ export default function Card({ task, isOpen, toggleDisclosure }) {
                   <div key={category.id} className="">
                     <Badge
                       onClick={() =>
-                        minorTaskUpdate(task, { status: category.value })
+                        handleMinorUpdates({ status: category.value })
                       }
                     >
                       {category.title}
@@ -138,10 +160,10 @@ export default function Card({ task, isOpen, toggleDisclosure }) {
           </Text>
 
           <div className={styles.deleteActions}>
-            <Button onClick={() => deleteTask(task._id)}>
+            <Button onClick={() => handleTaskDelete(task._id)}>
               {isLoading ? 'Deleting...' : 'Yes, Delete'}
             </Button>
-            <Button version="error" onClick={toggleDeleteModal}>
+            <Button variant="outline" color="error" onClick={toggleDeleteModal}>
               Canel
             </Button>
           </div>

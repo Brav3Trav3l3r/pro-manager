@@ -113,13 +113,6 @@ exports.deleteTask = catchAsync(async (req, res, next) => {
 exports.analytics = catchAsync(async (req, res, next) => {
   const tasks = await Task.find({ createdBy: req.user._id });
 
-  // const status = {
-  //   backlog: { name: 'Backlog Tasks', count: 0 },
-  //   todo: { name: 'To-do Tasks', count: 0 },
-  //   inProgress: { name: 'In-Progress Tasks', count: 0 },
-  //   done: { name: 'Completed Tasks', count: 0 },
-  // };
-
   const status = {
     backlog: 0,
     todo: 0,
