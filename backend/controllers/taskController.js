@@ -7,7 +7,8 @@ exports.getTasks = catchAsync(async (req, res, next) => {
   const query = req.query;
   let dbQuery = Task.find({ createdBy: req.user._id });
 
-  const today = moment().endOf('day');
+  const today = moment.utc().endOf('day');
+
   let range = 7;
 
   if (query.range) {
